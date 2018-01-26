@@ -6,7 +6,6 @@ package object flights {
                      flightDate: LocalDate,
                      origin: Airport,
                      destination: Airport
-                   ) {
-
-  }
+                   )
+  type Flights =  List[Flight]
 }
