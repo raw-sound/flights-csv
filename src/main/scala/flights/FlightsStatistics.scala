@@ -1,14 +1,16 @@
 package flights
 
+import java.time.temporal.WeekFields
+
 object FlightsStatistics {
 
   /**
-    * Computes total arrival per airport.
+    * Computes total arrivals per airport.
     *
     * @param flights all flights
     * @return map of (airport -> total arrivals to that airport). Does NOT contain airports that have no incoming flights
     */
-  def arrivalsPerAirport(flights: Flights): Map[Airport, Int] = flights.groupBy(_.destination).mapValues(_.size)
+  def arrivalsByAirport(flights: Flights): Map[Airport, Int] = flights.groupBy(_.destination).mapValues(_.size)
 
   /**
     * Collects all airports
@@ -33,6 +35,18 @@ object FlightsStatistics {
 
     flights.foldLeft(Map.empty[Airport, Int])((map, flight) =>
       adjust(flight.destination, 1)(adjust(flight.origin, -1)(map)))
-
   }
+
+  type WeekOfYear = Int
+
+  /**
+    * Computes total arrivals per airport per week of the year. The week is an ISO-8601 week of the year
+    *
+    * @param flights flights MUST have the same year
+    * @return map of (week of the year -> map of (airport -> number of arrivals that week)).
+    *         Map contains only weeks for which there is flights data
+    */
+  def arrivalsByAirportByWeek(flights: Flights): Map[WeekOfYear, Map[Airport, Int]] = flights
+    .groupBy(_.flightDate.get(WeekFields.ISO.weekOfYear))
+    .mapValues(arrivalsByAirport)
 }
