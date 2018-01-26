@@ -24,6 +24,31 @@ val twoFlightsToJFKAndOneToKBPAndOneToIEV: Flights = List( //dates are arbitrary
     }
   }
 
+  /**
+    * [[flights.FlightsStatistics.arrivalsPerAirport()]] tests
+    */
+  "arrivalsPerAirport" should {
+    "return empty map when no flights" in {
+      FlightsStatistics.arrivalsPerAirport(noFlights) === Map.empty
+    }
+
+    "Given 2 arrivals to JFK, 1 arrival to KBP and one arrival to IEV" should {
+      val arrivals = FlightsStatistics.arrivalsPerAirport(twoFlightsToJFKAndOneToKBPAndOneToIEV)
+      "have 3 entries" in {
+        arrivals.keySet.size === 3
+      }
+      "have 2 arrivals to JFK" in {
+        arrivals("JFK") === 2
+      }
+      "have 1 arrival to KBP" in {
+        arrivals("KBP") === 1
+      }
+      "have 1 arrival to IEV" in {
+        arrivals("IEV") === 1
+      }
+    }
+  }
+
 }
 
 
