@@ -31,7 +31,6 @@ val twoFlightsToJFKAndOneToKBPAndOneToIEV: Flights = List( //dates are arbitrary
     "return empty map when no flights" in {
       FlightsStatistics.arrivalsPerAirport(noFlights) === Map.empty
     }
-
     "Given 2 arrivals to JFK, 1 arrival to KBP and one arrival to IEV" should {
       val arrivals = FlightsStatistics.arrivalsPerAirport(twoFlightsToJFKAndOneToKBPAndOneToIEV)
       "have 3 entries" in {
@@ -47,6 +46,33 @@ val twoFlightsToJFKAndOneToKBPAndOneToIEV: Flights = List( //dates are arbitrary
         arrivals("IEV") === 1
       }
     }
+  }
+
+  /**
+    * [[flights.FlightsStatistics.inOutDifferencePerAirport()]] tests
+    */
+  "inOutDifferencePerAirport" should {
+    "return empty map when no flights" in {
+      FlightsStatistics.inOutDifferencePerAirport(noFlights) === Map.empty
+    }
+
+    val diffPerAirport = FlightsStatistics.inOutDifferencePerAirport(twoFlightsToJFKAndOneToKBPAndOneToIEV)
+    "return number of outgoing flights negated when airport has no incoming" in {
+      diffPerAirport("LAX") === -2
+    }
+
+    "not contain airport with zero difference" in {
+      diffPerAirport.isDefinedAt("KBP") === false
+    }
+
+    "return number of incoming flights negated when airport has no outgoing" in {
+      diffPerAirport("IEV") === 1
+    }
+
+    "return difference between incoming and outgoing flights" in {
+      diffPerAirport("JFK") === 1
+    }
+
   }
 
 }
