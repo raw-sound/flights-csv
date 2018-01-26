@@ -2,7 +2,7 @@ package flights.csv
 
 import java.time.LocalDate
 
-import flights.FlightsData
+import flights.Flight
 
 import scala.io.Source
 
@@ -21,16 +21,16 @@ object FlightsCsvReader {
     *
     * @param source source of csv data. The source MUST have the csv headers, implicit datatypes
     *               and quotation as in the example above
-    * @return List of all the data rows represented as #FlightCsvReader
+    * @return List of all the data rows represented as #Flight
     */
-  def readFlightData(source: Source): List[FlightsData] = {
+  def readFlightData(source: Source): List[Flight] = {
     val csvData = readCsvWithHeaders(source)
     Range(0, csvData.dataSize()).map(implicit i => {
       def fromCsv(header: String)(implicit index: Int): String = csvData.getData(header, index)
 
       def unquote(str: String): String = str.slice(1, str.length - 1)
 
-      FlightsData(
+      Flight(
         LocalDate.of(fromCsv("\"YEAR\"").toInt, fromCsv("\"MONTH\"").toInt, fromCsv("\"DAY_OF_MONTH\"").toInt),
         unquote(fromCsv("\"ORIGIN\"")),
         unquote(fromCsv("\"DEST\"")))
