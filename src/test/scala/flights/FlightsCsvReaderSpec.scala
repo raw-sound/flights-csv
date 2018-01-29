@@ -26,7 +26,7 @@ class FlightsCsvReaderSpec extends mutable.Specification with FlightDataContext 
   val headerOnly = "\"YEAR\",\"QUARTER\",\"MONTH\",\"DAY_OF_MONTH\",\"DAY_OF_WEEK\",\"FL_DATE\",\"ORIGIN\",\"DEST\","
 
 
-  "FlightsCsvReaderSpec" >> {
+  "readFlightData" >> {
     "Given csv with headers and no data rows readFlightData returns empty list" >> {
       val flightData = readFlightData(Source.fromString(headerOnly))
       flightData.size === 0
