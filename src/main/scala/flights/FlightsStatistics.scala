@@ -1,8 +1,6 @@
 package flights
 
-import java.time.temporal.{ChronoUnit, WeekFields}
-
-import scala.concurrent.duration.Duration
+import java.time.temporal.ChronoUnit
 
 object FlightsStatistics {
 

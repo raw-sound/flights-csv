@@ -1,7 +1,6 @@
 package flights
 
 import java.io._
-import java.nio.file.StandardOpenOption._
 import java.nio.file.{Files, Path}
 
 import flights.FlightsStatistics.Week
