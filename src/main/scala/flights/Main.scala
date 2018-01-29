@@ -7,6 +7,7 @@ import flights.FlightsStatistics._
 import flights.WriteUtil._
 import flights.csv.FlightsCsvReader.readFlightData
 
+import scala.collection.immutable
 import scala.io.Source
 
 /**
@@ -26,30 +27,25 @@ object Main {
   val ARRIVALS_PER_WEEK_PER_AIRPORT_FILE_NAME = "arrivals-per-week.txt"
 
   def main(args: Array[String]): Unit = {
+    process()
+  }
 
-    val flights = readCsvGz(Paths.get(SOURCE_FILE_NAME))
+  def process(): Unit = {
+    implicit def toPath(string: String): Path = Paths.get(string)
+    val flights = readCsvGz(SOURCE_FILE_NAME)
     val airports = allAirports(flights)
-
-    def statsForAllAirports(stats: Airport => Int) =
-      (for (airport <- airports) yield (airport, stats(airport))).toIndexedSeq
-
 
     writeArrivalsByAirportToFile()
     writeArrivalsDeparturesDiffByAirportToFile()
     writeArrivalsByAirportByWeekToFile()
 
-    def statsForAllAirportsSorted(map: Map[Airport, Int]) = statsForAllAirports(map withDefaultValue 0)
-      .sortBy(_._2)(Ordering.Int.reverse)
-
-    implicit def toPath(string: String): Path = Paths.get(string)
-
     def writeArrivalsByAirportToFile(): Unit = {
-      val arrivalsPerAirport = statsForAllAirportsSorted(arrivalsByAirport(flights))
+      val arrivalsPerAirport = statsForAllAirportsSortedByStatValueReversed(arrivalsByAirport(flights))
       writeToFile(ARRIVALS_PER_AIRPORT_FILE_NAME) { implicit w => printWithIndex(arrivalsPerAirport) }
     }
 
     def writeArrivalsDeparturesDiffByAirportToFile(): Unit = {
-      val arrivalDepartureDiff = inOutDifferencePerAirport(flights).toIndexedSeq.sortBy(_._2)
+      val arrivalDepartureDiff = inOutDifferencePerAirport(flights).toIndexedSeq.sortBy(_.swap)
       writeToFile(ARRIVALS_DEPARTURES_DIFF_PER_AIRPORT_FILE_NAME) { implicit w => printWithIndex(arrivalDepartureDiff) }
     }
 
@@ -59,14 +55,22 @@ object Main {
         weeklyArrivals.foreach { case (weekOfYear, stats) =>
           val indent = 4
           printWeek(weekOfYear)
-          val arrivals = statsForAllAirportsSorted(stats)
+          val arrivals = statsForAllAirportsSortedByStatValueReversed(stats)
           printWithIndex(arrivals, indent)
         }
       }
     }
 
+    def statsForAllAirports(stats: Airport => Int): immutable.IndexedSeq[AirportStat] =
+      (for (airport <- airports) yield (airport, stats(airport))).toIndexedSeq
+
+    def statsForAllAirportsSortedByStatValueReversed(map: Map[Airport, Int]): immutable.IndexedSeq[AirportStat] =
+      statsForAllAirports(map withDefaultValue 0)
+        .sortBy{ case (airport, value) => (-value, airport)}
+
   }
 
   def readCsvGz(path: Path): Flights = withResource(Source.fromInputStream(new GZIPInputStream(Files
     .newInputStream(path, StandardOpenOption.READ))))(readFlightData)
+
 }
