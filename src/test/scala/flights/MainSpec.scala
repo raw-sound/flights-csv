@@ -31,7 +31,7 @@ trait MainContext extends Before {
 
 class MainSpec extends mutable.Specification with MainContext {
 
-  def fileExsists: Matcher[Path] = { path: Path =>
+  def fileExists: Matcher[Path] = { path: Path =>
     (Files.exists(path), path.toString + " exists", path.toString + " does not exist")
   }
 
@@ -41,7 +41,7 @@ class MainSpec extends mutable.Specification with MainContext {
   "Main" should {
 
     "create all output files in current dir" in {
-      filesToBeCreated must contain(fileExsists).foreach
+      filesToBeCreated must contain(fileExists).foreach
     }
 
     s"number of lines in ${Main.ARRIVALS_PER_AIRPORT_FILE_NAME} must be equal to number of all airports in csv" in {
