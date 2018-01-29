@@ -9,6 +9,16 @@ import flights.csv.FlightsCsvReader.readFlightData
 
 import scala.io.Source
 
+/**
+  * Reads csv data from [[flights.Main.SOURCE_FILE_NAME]] file and writes the following data to files:
+  *
+  * 1. List of all airports with total number of planes for the whole period that arrived to each airport (to file [[flights.Main.ARRIVALS_PER_AIRPORT_FILE_NAME]])
+  * 2. Non-Zero difference in total number of planes that arrived to and left from the airport (to file [[flights.Main.ARRIVALS_DEPARTURES_DIFF_PER_AIRPORT_FILE_NAME]])
+  * 3. Does the point 1 but sum number of planes separately per each week (to file [[flights.Main.ARRIVALS_PER_WEEK_PER_AIRPORT_FILE_NAME]])
+  *
+  * If files already exist their contents are overridden
+  *
+  */
 object Main {
   val SOURCE_FILE_NAME = "planes_log.csv.gz"
   val ARRIVALS_PER_AIRPORT_FILE_NAME = "arrivals.txt"
