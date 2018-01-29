@@ -1,6 +1,8 @@
 package flights
 
-import java.time.temporal.WeekFields
+import java.time.temporal.{ChronoUnit, WeekFields}
+
+import scala.concurrent.duration.Duration
 
 object FlightsStatistics {
 
@@ -37,16 +39,19 @@ object FlightsStatistics {
       adjust(flight.destination, 1)(adjust(flight.origin, -1)(map)))
   }
 
-  type WeekOfYear = Int
+  type Week = Int
 
   /**
-    * Computes total arrivals per airport per week of the year. The week is an ISO-8601 week of the year
+    * Computes total arrivals per airport per week. The first day of the first week is the date of the first flight
     *
-    * @param flights flights MUST have the same year
+    * @param flights flights
     * @return map of (week of the year -> map of (airport -> number of arrivals that week)).
     *         Map contains only weeks for which there is flights data
     */
-  def arrivalsByAirportByWeek(flights: Flights): Map[WeekOfYear, Map[Airport, Int]] = flights
-    .groupBy(_.flightDate.get(WeekFields.ISO.weekOfYear))
-    .mapValues(arrivalsByAirport)
+  def arrivalsByAirportByWeek(flights: Flights): Map[Week, Map[Airport, Int]] = {
+    val startOfTime = flights.toArray.minBy(_.flightDate.toEpochDay).flightDate
+    def week(flight: Flight) = (ChronoUnit.DAYS.between(startOfTime, flight.flightDate) / 7 + 1).toInt
+
+    flights.groupBy(week).mapValues(arrivalsByAirport)
+  }
 }

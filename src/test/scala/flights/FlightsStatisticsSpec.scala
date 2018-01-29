@@ -76,36 +76,39 @@ val twoFlightsToJFKAndOneToKBPAndOneToIEV: Flights = List( //dates are arbitrary
   }
 
   val weeklyArrivals: Flights = List(
-    Flight(LocalDate.of(2016, 1, 1), "LAX", "JFK"), //First day of week. The week is 0
-    Flight(LocalDate.of(2016, 1, 3), "LAX", "IEV"), //Sunday of 0 week
-    Flight(LocalDate.of(2016, 1, 4), "LAX", "KBP"), //Monday of 1st week
-    Flight(LocalDate.of(2016, 1, 10), "JFK", "KBP"), //Sunday of 1st week
-    Flight(LocalDate.of(2016, 1, 11), "JFK", "KBP"), //Monday of 2nd week
+    Flight(LocalDate.of(2016, 1, 5), "LAX", "JFK"), //first flight. (Tuesday)
+    Flight(LocalDate.of(2016, 1, 11), "LAX", "IEV"), //next monday
+    Flight(LocalDate.of(2016, 1, 12), "LAX", "KBP"), //1st day of 2nd week
+    Flight(LocalDate.of(2016, 1, 18), "JFK", "KBP"), //last day of 2nd week
+    Flight(LocalDate.of(2016, 1, 19), "JFK", "KBP"), //Monday of 3rd week
     Flight(LocalDate.of(2016, 12, 31), "JFK", "KBP"), //Last day of year (week 52)
+    Flight(LocalDate.of(2017, 1, 1), "IEV", "JFK"), //First day of next year (week 52)
+    Flight(LocalDate.of(2017, 1, 3), "IEV", "JFK"), //First tuesday of next year (week 53)
   )
   /**
     * [[flights.FlightsStatistics.arrivalsByAirportByWeek()]] tests
     */
   "arrivalsPerAirportByWeek" should {
     val byWeek = FlightsStatistics.arrivalsByAirportByWeek(weeklyArrivals)
-    "have week 0 for first days of year before first ISO-8601 week" in {
-      byWeek.isDefinedAt(0)
+
+    "week include first flight and flight on {FIRST FLIGHT DATE} + {7 DAYS} " in {
+      byWeek(1) === Map("JFK" -> 1, "IEV" -> 1)
     }
 
-    "have flights up to Sunday of week 0 grouped in week 0" in {
-      byWeek(0) === Map("JFK" -> 1, "IEV" -> 1)
+    "2nd week include flight on {FIRST FLIGHT DATE} + {8 DAYS} and flight on {FIRST FLIGHT DATE} + {15 DAYS}" in {
+      byWeek(2) === Map("KBP" -> 2)
     }
 
-    "include flights from Mon till Sunday" in {
-      byWeek(1) === Map("KBP" -> 2)
+    "include and first day of years" in {
+      byWeek(52) === Map("KBP" -> 1, "JFK" -> 1)
     }
 
-    "include last day of year" in {
-      byWeek(52) === Map("KBP" -> 1)
+    "week counting continues when year changes" in {
+      byWeek(53) === Map("JFK" -> 1)
     }
 
     "contain only weeks that have any flights" in {
-      byWeek.keySet === Set(0,1,2,52)
+      byWeek.keySet === Set(1,2,3,52,53)
     }
   }
 

@@ -4,7 +4,7 @@ import java.io._
 import java.nio.file.StandardOpenOption._
 import java.nio.file.{Files, Path}
 
-import flights.FlightsStatistics.WeekOfYear
+import flights.FlightsStatistics.Week
 
 object WriteUtil {
 
@@ -53,7 +53,7 @@ object WriteUtil {
     }
   }
 
-  def printWeek(weekOfYear: WeekOfYear, indent: Indent = 0)(implicit writer: Writer): Unit = {
+  def printWeek(weekOfYear: Week, indent: Indent = 0)(implicit writer: Writer): Unit = {
     writer.appendIndentation(indent).append('W').append(weekOfYear).append('\n')
   }
 
