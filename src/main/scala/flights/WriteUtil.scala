@@ -10,14 +10,20 @@ object WriteUtil {
 
   type Indent = Int
 
+  /**
+    * Opens file and writes starting from start of file and flushes the writer. Creates the file if it does not exist.
+    *
+    * @param path to file
+    * @param write what should be written
+    */
   def writeToFile(path: Path)(write: Writer => Unit): Unit =
-    withResource(Files.newBufferedWriter(path, CREATE, WRITE)) { w => {
+    withResource(Files.newBufferedWriter(path)) { w => {
       write(w)
       w.flush()
     }
     }
 
-  def withResource[R <: AutoCloseable, A](resource: => R)(code: R => A): A = {
+  def withResource[R <: AutoCloseable, A](resource: R)(code: R => A): A = {
     try
       code(resource)
     finally {
