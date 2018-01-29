@@ -25,7 +25,7 @@ object FlightsCsvReader {
     */
   def readFlightData(source: Source): List[Flight] = {
     val csvData = readCsvWithHeaders(source)
-    Range(0, csvData.dataSize()).map(implicit i => {
+    (0 until csvData.dataSize()).map(implicit i => {
       def fromCsv(header: String)(implicit index: Int): String = csvData.getData(header, index)
 
       def unquote(str: String): String = str.slice(1, str.length - 1)
