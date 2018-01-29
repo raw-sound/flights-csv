@@ -49,9 +49,12 @@ object FlightsStatistics {
     *         Map contains only weeks for which there is flights data
     */
   def arrivalsByAirportByWeek(flights: Flights): Map[Week, Map[Airport, Int]] = {
-    val startOfTime = flights.toArray.minBy(_.flightDate.toEpochDay).flightDate
-    def week(flight: Flight) = (ChronoUnit.DAYS.between(startOfTime, flight.flightDate) / 7 + 1).toInt
+    if (flights.isEmpty) Map.empty else {
+      val startOfTime = flights.toArray.minBy(_.flightDate.toEpochDay).flightDate
 
-    flights.groupBy(week).mapValues(arrivalsByAirport)
+      def week(flight: Flight) = (ChronoUnit.DAYS.between(startOfTime, flight.flightDate) / 7 + 1).toInt
+
+      flights.groupBy(week).mapValues(arrivalsByAirport)
+    }
   }
 }

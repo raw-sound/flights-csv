@@ -89,7 +89,12 @@ val twoFlightsToJFKAndOneToKBPAndOneToIEV: Flights = List( //dates are arbitrary
     * [[flights.FlightsStatistics.arrivalsByAirportByWeek()]] tests
     */
   "arrivalsPerAirportByWeek" should {
+
     val byWeek = FlightsStatistics.arrivalsByAirportByWeek(weeklyArrivals)
+
+    "return empty Map when no flights" in {
+      FlightsStatistics.arrivalsByAirportByWeek(noFlights) === Map.empty
+    }
 
     "1st week include first flight and flight on {FIRST FLIGHT DATE} + {6 DAYS} " in {
       byWeek(1) === Map("JFK" -> 1, "IEV" -> 1)
