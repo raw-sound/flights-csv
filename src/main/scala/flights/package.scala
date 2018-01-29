@@ -7,5 +7,6 @@ package object flights {
                      origin: Airport,
                      destination: Airport
                    )
-  type Flights =  List[Flight]
+  type Flights =  Traversable[Flight]
+  type AirportStat = (Airport, Int)
 }
