@@ -91,11 +91,11 @@ val twoFlightsToJFKAndOneToKBPAndOneToIEV: Flights = List( //dates are arbitrary
   "arrivalsPerAirportByWeek" should {
     val byWeek = FlightsStatistics.arrivalsByAirportByWeek(weeklyArrivals)
 
-    "week include first flight and flight on {FIRST FLIGHT DATE} + {7 DAYS} " in {
+    "1st week include first flight and flight on {FIRST FLIGHT DATE} + {6 DAYS} " in {
       byWeek(1) === Map("JFK" -> 1, "IEV" -> 1)
     }
 
-    "2nd week include flight on {FIRST FLIGHT DATE} + {8 DAYS} and flight on {FIRST FLIGHT DATE} + {15 DAYS}" in {
+    "2nd week include flight on {FIRST FLIGHT DATE} + {7 DAYS} and flight on {FIRST FLIGHT DATE} + {14 DAYS}" in {
       byWeek(2) === Map("KBP" -> 2)
     }
 
